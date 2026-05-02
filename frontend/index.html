@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌱 Sistema de Riego Inteligente</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌱 Sistema de Riego Inteligente</h1>
+            <p>Monitoreo en tiempo real de tu planta</p>
+        </div>
+
+        <div id="loading" class="loading">Cargando datos...</div>
+
+        <div id="dashboard" style="display: none;">
+            <div class="dashboard">
+                <div class="card">
+                    <h3>💧 Humedad del Suelo</h3>
+                    <div class="sensor-value">
+                        <span id="humedad">--</span><span class="sensor-unit">%</span>
+                    </div>
+                    <div id="humedad-status"></div>
+                </div>
+
+                <div class="card">
+                    <h3>🌡️ Temperatura</h3>
+                    <div class="sensor-value">
+                        <span id="temperatura">--</span><span class="sensor-unit">°C</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>💨 Humedad Ambiente</h3>
+                    <div class="sensor-value">
+                        <span id="humedad_ambiente">--</span><span class="sensor-unit">%</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>💦 Bomba de Riego</h3>
+                    <div id="bomba-status"></div>
+                    <div class="timestamp" id="timestamp"></div>
+                </div>
+            </div>
+
+            <div class="historial">
+                <h3>📊 Historial de las últimas 24 horas</h3>
+                <div style="overflow-x: auto;">
+                    <table id="historial-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha/Hora</th>
+                                <th>Humedad Suelo</th>
+                                <th>Temperatura</th>
+                                <th>Bomba</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historial-body">
+                            <tr>
+                                <td colspan="4">Cargando historial...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+
+</html>

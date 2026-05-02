@@ -1,0 +1,11 @@
+{
+  "device_id": "maceta_001",
+  "suelo": {
+    "humedad": 45.2
+  },
+  "ambiente": {
+    "temperatura": 24.1,
+    "humedad": 58.3
+  },
+  "timestamp": 1714512000000
+}

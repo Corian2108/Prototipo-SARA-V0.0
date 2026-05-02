@@ -1,0 +1,30 @@
+{
+  "name": "prototipo-sara-v0.0",
+  "version": "1.0.0",
+  "description": "Prototipo de Sistema Adaptable de Riego Autonomo (SARA) V0.0, incluye API que recibe datos del controlador, BDD y Dashboard simples",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Corian2108/Prototipo-SARA-V0.0.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Corian2108/Prototipo-SARA-V0.0/issues"
+  },
+  "homepage": "https://github.com/Corian2108/Prototipo-SARA-V0.0#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "sqlite3": "^6.0.1"
+  },
+  "devDependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "nodemon": "^3.1.14"
+  }
+}

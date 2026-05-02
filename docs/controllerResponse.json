@@ -1,0 +1,5 @@
+{
+  "accion": "regar",
+  "duracion_ms": 5000,
+  "proximo_control": 60000
+}

@@ -10,62 +10,168 @@
 
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🌱 Sistema de Riego Inteligente</h1>
-            <p>Monitoreo en tiempo real de tu planta</p>
+        <div id="loading" class="loading">Inicializando sistema...</div>
+
+        <!-- Vista de Setup -->
+        <div id="setup-view" style="display: none;">
+            <div class="header">
+                <h1>🌱 Bienvenido al Sistema de Riego Inteligente</h1>
+                <p>Configura tu usuario y contraseña para comenzar</p>
+            </div>
+            <div class="auth-container">
+                <form id="setup-form">
+                    <h3>Configuración Inicial</h3>
+                    <div class="form-group">
+                        <label for="setup-usuario">Usuario:</label>
+                        <input type="text" id="setup-usuario" required minlength="6" placeholder="Al menos 6 caracteres">
+                    </div>
+                    <div class="form-group">
+                        <label for="setup-contrasena">Contraseña:</label>
+                        <input type="password" id="setup-contrasena" required minlength="8" placeholder="Al menos 8 caracteres">
+                    </div>
+                    <button type="submit" class="btn-primary">Crear Cuenta</button>
+                    <div id="setup-error" class="error-message" style="display: none;"></div>
+                </form>
+            </div>
         </div>
 
-        <div id="loading" class="loading">Cargando datos...</div>
-
-        <div id="dashboard" style="display: none;">
-            <div class="dashboard">
-                <div class="card">
-                    <h3>💧 Humedad del Suelo</h3>
-                    <div class="sensor-value">
-                        <span id="humedad">--</span><span class="sensor-unit">%</span>
+        <!-- Vista de Login -->
+        <div id="login-view" style="display: none;">
+            <div class="header">
+                <h1>🌱 Sistema de Riego Inteligente</h1>
+                <p>Inicia sesión para continuar</p>
+            </div>
+            <div class="auth-container">
+                <form id="login-form">
+                    <h3>Iniciar Sesión</h3>
+                    <div class="form-group">
+                        <label for="login-usuario">Usuario:</label>
+                        <input type="text" id="login-usuario" required placeholder="Tu usuario">
                     </div>
-                    <div id="humedad-status"></div>
-                </div>
-
-                <div class="card">
-                    <h3>🌡️ Temperatura</h3>
-                    <div class="sensor-value">
-                        <span id="temperatura">--</span><span class="sensor-unit">°C</span>
+                    <div class="form-group">
+                        <label for="login-contrasena">Contraseña:</label>
+                        <input type="password" id="login-contrasena" required placeholder="Tu contraseña">
                     </div>
-                </div>
+                    <button type="submit" class="btn-primary">Ingresar</button>
+                    <div id="login-error" class="error-message" style="display: none;"></div>
+                </form>
+            </div>
+        </div>
 
-                <div class="card">
-                    <h3>💨 Humedad Ambiente</h3>
-                    <div class="sensor-value">
-                        <span id="humedad_ambiente">--</span><span class="sensor-unit">%</span>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3>💦 Bomba de Riego</h3>
-                    <div id="bomba-status"></div>
-                    <div class="timestamp" id="timestamp"></div>
-                </div>
+        <!-- Vista del Dashboard -->
+        <div id="dashboard-view" style="display: none;">
+            <div class="header">
+                <h1>🌱 Sistema de Riego Inteligente</h1>
+                <p>Monitoreo en tiempo real de tu planta</p>
+                <button onclick="cerrarSesion()" class="btn-logout">Cerrar Sesión</button>
             </div>
 
-            <div class="historial">
-                <h3>📊 Historial de las últimas 24 horas</h3>
-                <div style="overflow-x: auto;">
-                    <table id="historial-table">
-                        <thead>
-                            <tr>
-                                <th>Fecha/Hora</th>
-                                <th>Humedad Suelo</th>
-                                <th>Temperatura</th>
-                                <th>Bomba</th>
-                            </tr>
-                        </thead>
-                        <tbody id="historial-body">
-                            <tr>
-                                <td colspan="4">Cargando historial...</td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <div class="tabs">
+                <button class="tab-button active" onclick="showTab('config')">⚙️ Configuración</button>
+                <button class="tab-button" onclick="showTab('analytics')">📊 Analytics</button>
+                <button class="tab-button" onclick="showTab('sensor')">🌡️ Sensores</button>
+            </div>
+
+            <div id="config-tab" class="tab-content active">
+                <h3>Configuración de Riego</h3>
+                <div id="config-display"></div>
+                <h3>Actualizar Configuración</h3>
+                <form id="config-form">
+                    <div class="form-group">
+                        <label>Humedad Mínima (%):</label>
+                        <input type="number" id="humedad_minima" required min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Humedad Objetivo (%):</label>
+                        <input type="number" id="humedad_objetivo" required min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Tiempo de Espera entre Riegos segundos:</label>
+                        <input type="number" id="tiempo_espera" required min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Intervalo de Mediciones (minutos):</label>
+                        <input type="number" id="intervalo_mediciones" required min="1">
+                    </div>
+                    <button type="submit" class="btn-primary">Actualizar Configuración</button>
+                </form>
+            </div>
+
+            <div id="analytics-tab" class="tab-content">
+                <h3>Resumen de Mediciones</h3>
+                <div class="dashboard">
+                    <div class="card">
+                        <h3>📈 Total de Lecturas</h3>
+                        <div class="sensor-value" id="total-lecturas">--</div>
+                    </div>
+                    <div class="card">
+                        <h3>💧 Humedad Promedio</h3>
+                        <div class="sensor-value" id="humedad-promedio">--<span class="sensor-unit">%</span></div>
+                    </div>
+                    <div class="card">
+                        <h3>🌡️ Temperatura Promedio</h3>
+                        <div class="sensor-value" id="temperatura-promedio">--<span class="sensor-unit">°C</span></div>
+                    </div>
+                    <div class="card">
+                        <h3>💧 Ciclos de Riego</h3>
+                        <div class="sensor-value" id="ciclos-riego">--</div>
+                    </div>
+                </div>
+                <button onclick="exportCSV()" class="btn-secondary">Descargar CSV</button>
+            </div>
+
+            <div id="sensor-tab" class="tab-content">
+                <h3>Última Lectura de Sensores</h3>
+                <div class="dashboard">
+                    <div class="card">
+                        <h3>💧 Humedad del Suelo</h3>
+                        <div class="sensor-value">
+                            <span id="humedad">--</span><span class="sensor-unit">%</span>
+                        </div>
+                        <div id="humedad-status"></div>
+                    </div>
+
+                    <div class="card">
+                        <h3>🌡️ Temperatura</h3>
+                        <div class="sensor-value">
+                            <span id="temperatura">--</span><span class="sensor-unit">°C</span>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>💨 Humedad Ambiente</h3>
+                        <div class="sensor-value">
+                            <span id="humedad_ambiente">--</span><span class="sensor-unit">%</span>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>💦 Bomba de Riego</h3>
+                        <div id="bomba-status"></div>
+                        <div class="timestamp" id="timestamp"></div>
+                    </div>
+                </div>
+                <button onclick="actualizarDashboard()" class="btn-secondary">Actualizar Lectura</button>
+                <button onclick="cargarHistorial()" class="btn-secondary">Cargar Historial</button>
+                <div class="historial">
+                    <h3>📊 Historial de las últimas 24 horas</h3>
+                    <div style="overflow-x: auto;">
+                        <table id="historial-table">
+                            <thead>
+                                <tr>
+                                    <th>Fecha/Hora</th>
+                                    <th>Humedad Suelo</th>
+                                    <th>Temperatura</th>
+                                    <th>Bomba</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historial-body">
+                                <tr>
+                                    <td colspan="4">Presiona "Cargar Historial" para ver los datos</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

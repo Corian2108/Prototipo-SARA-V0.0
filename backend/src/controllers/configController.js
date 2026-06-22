@@ -1,5 +1,8 @@
 const db = require('../config/database');
 
+// Obtiene la configuración actual del sistema de riego
+// Entrada: ninguna
+// Salida: JSON con parámetros de configuración {humedad_minima, humedad_objetivo, riego_maximo_segundos, ...}
 const obtenerConfiguracion = (req, res) => {
     db.get(`SELECT * FROM configuracion_riego ORDER BY id DESC LIMIT 1`, (err, row) => {
         if (err) {
@@ -9,13 +12,19 @@ const obtenerConfiguracion = (req, res) => {
     });
 };
 
+// Actualiza parámetros específicos de la configuración de riego
+// Entrada: JSON con uno o más parámetros a actualizar {humedad_minima, humedad_objetivo, riego_maximo_segundos}
+// Salida: JSON {status, message, changes} indicando cuántos registros fueron modificados
+// Validación: al menos un parámetro debe ser proporcionado
 const actualizarConfiguracion = (req, res) => {
     const { humedad_minima, humedad_objetivo, riego_maximo_segundos } = req.body;
 
+    // Validar que se proporcione al menos un parámetro
     if (!humedad_minima && !humedad_objetivo && !riego_maximo_segundos) {
         return res.status(400).json({ error: 'No se proporcionaron parámetros para actualizar' });
     }
 
+    // Construir dinámicamente la sentencia UPDATE solo con parámetros proporcionados
     const updates = [];
     const values = [];
 
@@ -34,8 +43,10 @@ const actualizarConfiguracion = (req, res) => {
         values.push(riego_maximo_segundos);
     }
 
+    // Agregar timestamp de actualización
     updates.push('updated_at = CURRENT_TIMESTAMP');
 
+    // Generar SQL dinámicamente y actualizar el registro más reciente
     const sql = `UPDATE configuracion_riego SET ${updates.join(', ')} WHERE id = (SELECT id FROM configuracion_riego ORDER BY id DESC LIMIT 1)`;
 
     db.run(sql, values, function (err) {

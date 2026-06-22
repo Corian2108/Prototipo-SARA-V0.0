@@ -19,7 +19,7 @@ pids/
 *.pid
 *.seed
 *.pid.lock
-
+*.db
 # Coverage
 coverage/
 *.lcov

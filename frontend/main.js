@@ -278,7 +278,7 @@ document.getElementById('setup-form').addEventListener('submit', function (e) {
 // y muestra la vista de configuración inicial del sistema, el login o la vista principal según el estado.
 document.addEventListener('DOMContentLoaded', function () {
     let token = localStorage.getItem('authToken');
-    if (token == '' || token == null) {
+    if (token !== '' || token != null) {
         fetch(`${baseURL}/auth/check-setup`, {
             method: 'POST',
             headers: {
@@ -288,7 +288,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })
             .then(res => res.json())
             .then(data => {
-                if (data.isSetup) {
+                if (data.isSetup && data.hasActiveSessions) {
                     document.getElementById('loading').style.display = 'none';
                     if (data.hasActiveSessions) {
                         document.getElementById('dashboard-view').style.display = 'block';
@@ -301,6 +301,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             })
     }else{
-        //validar si el token es válido antes de mostrar dashboard
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('login-view').style.display = 'block';
     }
 });

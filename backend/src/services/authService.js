@@ -183,16 +183,29 @@ const verifyToken = (token) => {
 // Salida: Promise<{message}> - mensaje de confirmación
 const logoutUser = (token) => {
     return new Promise((resolve, reject) => {
-        db.run(
-            `UPDATE Sesion SET Active = 0 WHERE Token = ?`,
-            [token],
-            function (err) {
-                if (err) return reject(err);
-                resolve({ message: 'Sesión cerrada' });
-            }
-        );
+        verifyToken(token)
+            .then(() => {
+                db.run(
+                    `UPDATE Sesion SET Active = 0 WHERE Token = ?`,
+                    [token],
+                    function (err) {
+                        if (err) return reject(err);
+                        resolve();
+                    }
+                );
+            })
+            .catch(() => {
+                db.run(
+                    `UPDATE Sesion SET Active = 0 WHERE Active = 1`,
+                    function (err) {
+                        if (err) return reject(err);
+                        resolve();
+                    }
+                );
+            });
     });
-};
+}
+
 
 // Bloquea un usuario por ID (usado cuando se agoten los intentos de login)
 // Entrada: userId (number)

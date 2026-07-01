@@ -281,6 +281,26 @@ db.serialize(() => {
     );`,
     'Sesion'
   );
+  
+  /* ==========================================================================
+   * TABLA: ConfigurationState
+   * --------------------------------------------------------------------------
+   * Catálogo de posibles estados de una configuración (ej: "Activa",
+   * "Inactiva"). Es referenciada por Configuration.StateId.
+   *
+   * Campos:
+   *   - ConfigStatId (PK, INTEGER AUTOINCREMENT): identificador único del
+   *     estado de configuración.
+   *   - Description (VARCHAR(20)): nombre/descripción del estado.
+   * ========================================================================== */
+  run(
+    `CREATE TABLE IF NOT EXISTS ConfigurationState (
+      ConfigStateId  INTEGER PRIMARY KEY AUTOINCREMENT,
+      Description VARCHAR(50)
+    );`,
+    'ConfigurationState'
+  );
+
 
   /* ==========================================================================
    * TABLA: Configuration
@@ -305,9 +325,11 @@ db.serialize(() => {
       IrrigationId    INTEGER,
       CyclesId        INTEGER,
       SesionId        INTEGER,
+      StateId         INTEGER DEFAULT 1,
       FOREIGN KEY (IrrigationId) REFERENCES Irrigation (IrrigationId),
       FOREIGN KEY (CyclesId)     REFERENCES Cycles (CycleId),
-      FOREIGN KEY (SesionId)     REFERENCES Sesion (SesionId)
+      FOREIGN KEY (SesionId)     REFERENCES Sesion (SesionId),
+      FOREIGN KEY (StateId)      REFERENCES ConfigurationState (ConfigStateId)
     );`,
     'Configuration'
   );
@@ -463,6 +485,27 @@ db.serialize(() => {
             console.error('[SARA][DB] Error al insertar estados de usuario:', err.message);
           } else {
             console.log('[SARA][DB] Estados de usuario inicializados: Activo, Bloqueado');
+          }
+        }
+      );
+    }
+  });
+
+  /* ==========================================================================
+   * DATOS INICIALES: Estados de Configuración
+   * --------------------------------------------------------------------------
+   * Se insertan los estados base solo si la tabla ConfigurationState está vacía.
+   * Estados: 1 = Activa, 2 = Inactiva
+   * ========================================================================== */
+  db.get(`SELECT COUNT(*) as count FROM ConfigurationState`, (err, row) => {
+    if (!err && row.count === 0) {
+      db.run(
+        `INSERT INTO ConfigurationState (ConfigStateId, Description) VALUES (1, 'Activa'), (2, 'Inactiva'), (3, 'Eliminada')`,
+        (err) => {
+          if (err) {
+            console.error('[SARA][DB] Error al insertar estados de configuración:', err.message);
+          } else {
+            console.log('[SARA][DB] Estados de configuración inicializados: Activa, Inactiva, Eliminada');
           }
         }
       );
